@@ -1,0 +1,407 @@
+{
+  "domain_cases": [
+    {
+      "run_id": "TC-001",
+      "backend": "ollama/qwen3:4b-instruct-2507-q4_K_M",
+      "query": "Скільки аркушів в упаковці паперу з каталогу і яка ціна однієї упаковки в CAD?",
+      "actual": {
+        "answer": "У одній упаковці паперу 25 аркушів, ціна однієї упаковки — 4,50 CAD.",
+        "confidence": 1.0,
+        "sources": [
+          "get_pack"
+        ]
+      },
+      "stop_reason": "completed",
+      "steps": 2,
+      "tool_calls": [
+        {
+          "id": "08cfee11-1951-4a4e-ab7d-ae22db80a182",
+          "name": "get_pack",
+          "args": {
+            "item": "paper"
+          },
+          "status": "success",
+          "result": {
+            "item": "paper",
+            "pack_size": 25,
+            "price_cents": 450,
+            "price_cad": "4.50"
+          }
+        }
+      ],
+      "elapsed_ms": 44057.55,
+      "max_steps_reached": false,
+      "timed_out": false,
+      "loop_detected": false,
+      "expected": "25 аркушів, 4.50 CAD за упаковку.",
+      "complexity": "simple",
+      "checks": {
+        "completed": true,
+        "tool_sequence_and_arguments": true,
+        "requested_numbers": true,
+        "currency": true
+      },
+      "passed": true
+    },
+    {
+      "run_id": "TC-002",
+      "backend": "ollama/qwen3:4b-instruct-2507-q4_K_M",
+      "query": "На заняття прийдуть 18 дітей. Кожній дитині потрібно по 2 клей-олівці. Запасу немає. Скільки цілих упаковок клею з каталогу купити?",
+      "actual": {
+        "answer": "6 упаковок.",
+        "confidence": 1.0,
+        "sources": [
+          "get_pack",
+          "plan_packs"
+        ]
+      },
+      "stop_reason": "completed",
+      "steps": 3,
+      "tool_calls": [
+        {
+          "id": "2775227f-60d0-4570-8302-991c718a5597",
+          "name": "get_pack",
+          "args": {
+            "item": "glue"
+          },
+          "status": "success",
+          "result": {
+            "item": "glue",
+            "pack_size": 6,
+            "price_cents": 720,
+            "price_cad": "7.20"
+          }
+        },
+        {
+          "id": "7f0faa6c-3f4c-48c4-9438-d7e8347acb0c",
+          "name": "plan_packs",
+          "args": {
+            "children": 18,
+            "on_hand": 0,
+            "pack_size": 6,
+            "per_child": 2
+          },
+          "status": "success",
+          "result": {
+            "required_units": 36,
+            "packs_to_buy": 6,
+            "leftover_units": 0
+          }
+        }
+      ],
+      "elapsed_ms": 40549.34,
+      "max_steps_reached": false,
+      "timed_out": false,
+      "loop_detected": false,
+      "expected": "Потрібно 36 клей-олівців, тобто 6 упаковок по 6. Запитана величина — 6 упаковок.",
+      "complexity": "medium",
+      "checks": {
+        "completed": true,
+        "tool_sequence_and_arguments": true,
+        "requested_numbers": true,
+        "packs_in_answer": true
+      },
+      "passed": true
+    },
+    {
+      "run_id": "TC-003",
+      "backend": "ollama/qwen3:4b-instruct-2507-q4_K_M",
+      "query": "Для колажу 24 дітям потрібно по 3 аркуші паперу. У шафі вже є 10 аркушів. За каталогом визнач, скільки упаковок купити, скільки аркушів залишиться після заняття і якою буде загальна вартість покупки в CAD.",
+      "actual": {
+        "answer": "Потрібно купити 3 упаковки паперу, після заняття залишиться 13 аркушів, загальна вартість покупки — 13.50 CAD.",
+        "confidence": 0.98,
+        "sources": [
+          "get_pack",
+          "plan_packs",
+          "order_cost"
+        ]
+      },
+      "stop_reason": "completed",
+      "steps": 4,
+      "tool_calls": [
+        {
+          "id": "d0628dec-4bda-49b3-a62b-487ca0870770",
+          "name": "get_pack",
+          "args": {
+            "item": "paper"
+          },
+          "status": "success",
+          "result": {
+            "item": "paper",
+            "pack_size": 25,
+            "price_cents": 450,
+            "price_cad": "4.50"
+          }
+        },
+        {
+          "id": "1a2ab11c-887c-4163-ad6f-2353ec1ff03f",
+          "name": "plan_packs",
+          "args": {
+            "children": 24,
+            "on_hand": 10,
+            "pack_size": 25,
+            "per_child": 3
+          },
+          "status": "success",
+          "result": {
+            "required_units": 72,
+            "packs_to_buy": 3,
+            "leftover_units": 13
+          }
+        },
+        {
+          "id": "ad421152-c708-4a8d-ba08-6b97b41b66db",
+          "name": "order_cost",
+          "args": {
+            "packs": 3,
+            "price_cents": 450
+          },
+          "status": "success",
+          "result": {
+            "total_cents": 1350,
+            "total_cad": "13.50"
+          }
+        }
+      ],
+      "elapsed_ms": 52893.68,
+      "max_steps_reached": false,
+      "timed_out": false,
+      "loop_detected": false,
+      "expected": "Купити 3 упаковки, після заняття залишиться 13 аркушів, вартість 13.50 CAD.",
+      "complexity": "complex",
+      "checks": {
+        "completed": true,
+        "tool_sequence_and_arguments": true,
+        "requested_numbers": true,
+        "packs_in_answer": true,
+        "leftover_in_answer": true,
+        "currency": true
+      },
+      "passed": true
+    },
+    {
+      "run_id": "TC-004",
+      "backend": "ollama/qwen3:4b-instruct-2507-q4_K_M",
+      "query": "Планую малювання. Кожній дитині потрібно по 2 фломастери. Скільки упаковок купити для моєї групи?",
+      "actual": {
+        "answer": "Скільки дітей братимуть участь у занятті?",
+        "confidence": 0.3,
+        "sources": []
+      },
+      "stop_reason": "completed",
+      "steps": 1,
+      "tool_calls": [],
+      "elapsed_ms": 15929.58,
+      "max_steps_reached": false,
+      "timed_out": false,
+      "loop_detected": false,
+      "expected": "Уточнити кількість дітей. До відповіді користувача розрахунок неможливий.",
+      "complexity": "clarification",
+      "checks": {
+        "completed": true,
+        "no_premature_calculation": true,
+        "asks_group_size": true
+      },
+      "passed": true
+    },
+    {
+      "run_id": "TC-005",
+      "backend": "ollama/qwen3:4b-instruct-2507-q4_K_M",
+      "query": "Для 12 дітей потрібно по 2 фломастери. Є 3 фломастери. Скільки упаковок купити і скільки це коштуватиме?",
+      "actual": {
+        "answer": "Загальна вартість 3 упаковок фломастерів складає 19.20 CAD.",
+        "confidence": 0.9,
+        "sources": [
+          "get_pack",
+          "plan_packs",
+          "order_cost"
+        ]
+      },
+      "stop_reason": "completed",
+      "steps": 5,
+      "tool_calls": [
+        {
+          "id": "2bc4faac-e17b-481d-9f58-4a77d81001c4",
+          "name": "get_pack",
+          "args": {
+            "item": "markers"
+          },
+          "status": "success",
+          "result": {
+            "item": "markers",
+            "pack_size": 8,
+            "price_cents": 640,
+            "price_cad": "6.40"
+          }
+        },
+        {
+          "id": "25bc1636-a561-4169-b5fb-64bf5b02a5fc",
+          "name": "plan_packs",
+          "args": {
+            "children": 12,
+            "on_hand": 3,
+            "pack_size": 8,
+            "per_child": 2
+          },
+          "status": "success",
+          "result": {
+            "required_units": 24,
+            "packs_to_buy": 3,
+            "leftover_units": 3
+          }
+        },
+        {
+          "id": "cd2066ff-87de-46de-997e-e9af74e45198",
+          "name": "order_cost",
+          "args": {
+            "packs": 3,
+            "price_cents": 640
+          },
+          "status": "success",
+          "result": {
+            "total_cents": 1920,
+            "total_cad": "19.20"
+          }
+        }
+      ],
+      "elapsed_ms": 49942.78,
+      "max_steps_reached": false,
+      "timed_out": false,
+      "loop_detected": false,
+      "expected": "Потрібно купити 3 упаковки, перевірена загальна вартість — 19.20 CAD.",
+      "complexity": "complex",
+      "checks": {
+        "completed": true,
+        "tool_sequence_and_arguments": true,
+        "requested_numbers": true,
+        "packs_in_answer": true,
+        "currency": true
+      },
+      "passed": true
+    }
+  ],
+  "safety_demos": [
+    {
+      "run_id": "G-01",
+      "backend": "controlled_test_driver",
+      "query": "Лише одне рішення моделі. Перший виклик каталогу встигає виконатися.",
+      "actual": {
+        "answer": "Досягнуто ліміт рішень моделі (1). Отримані дані: get_pack → {\"item\": \"paper\", \"pack_size\": 25, \"price_cents\": 450, \"price_cad\": \"4.50\"}.",
+        "confidence": 0.0,
+        "sources": [
+          "get_pack"
+        ]
+      },
+      "stop_reason": "max_steps",
+      "steps": 1,
+      "tool_calls": [
+        {
+          "id": "demo-1",
+          "name": "get_pack",
+          "args": {
+            "item": "paper"
+          },
+          "status": "success",
+          "result": {
+            "item": "paper",
+            "pack_size": 25,
+            "price_cents": 450,
+            "price_cad": "4.50"
+          }
+        }
+      ],
+      "elapsed_ms": 8.33,
+      "max_steps_reached": true,
+      "timed_out": false,
+      "loop_detected": false,
+      "expected": "max_steps",
+      "checks": {
+        "reason": true,
+        "steps": true,
+        "completed_tool_calls": true
+      },
+      "passed": true
+    },
+    {
+      "run_id": "G-02",
+      "backend": "controlled_test_driver",
+      "query": "Три запити того самого матеріалу поспіль. Третій виклик блокується.",
+      "actual": {
+        "answer": "Зупинено після 3 однакових запитів поспіль. Отримані дані: get_pack → {\"item\": \"paper\", \"pack_size\": 25, \"price_cents\": 450, \"price_cad\": \"4.50\"}.",
+        "confidence": 0.0,
+        "sources": [
+          "get_pack"
+        ]
+      },
+      "stop_reason": "loop_detected",
+      "steps": 3,
+      "tool_calls": [
+        {
+          "id": "demo-1",
+          "name": "get_pack",
+          "args": {
+            "item": "paper"
+          },
+          "status": "success",
+          "result": {
+            "item": "paper",
+            "pack_size": 25,
+            "price_cents": 450,
+            "price_cad": "4.50"
+          }
+        },
+        {
+          "id": "demo-2",
+          "name": "get_pack",
+          "args": {
+            "item": "paper"
+          },
+          "status": "success",
+          "result": {
+            "item": "paper",
+            "pack_size": 25,
+            "price_cents": 450,
+            "price_cad": "4.50"
+          }
+        }
+      ],
+      "elapsed_ms": 7.75,
+      "max_steps_reached": false,
+      "timed_out": false,
+      "loop_detected": true,
+      "expected": "loop_detected",
+      "checks": {
+        "reason": true,
+        "steps": true,
+        "completed_tool_calls": true
+      },
+      "passed": true
+    },
+    {
+      "run_id": "G-03",
+      "backend": "controlled_test_driver",
+      "query": "Модель чекає 2 с, загальний бюджет запуску 0.15 с.",
+      "actual": {
+        "answer": "Вичерпано загальний час (0.15 с).",
+        "confidence": 0.0,
+        "sources": []
+      },
+      "stop_reason": "timeout",
+      "steps": 1,
+      "tool_calls": [],
+      "elapsed_ms": 151.68,
+      "max_steps_reached": false,
+      "timed_out": true,
+      "loop_detected": false,
+      "expected": "timeout",
+      "checks": {
+        "reason": true,
+        "steps": true,
+        "completed_tool_calls": true,
+        "interrupted_in_flight": true,
+        "finished_before_2s": true
+      },
+      "passed": true
+    }
+  ]
+}

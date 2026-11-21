@@ -1,0 +1,5 @@
+langgraph==1.2.24
+langchain-core==1.8.4
+langchain-ollama==1.1.0
+pydantic==2.14.4
+httpx[socks]==0.28.1
